@@ -11,14 +11,12 @@ def get_data(link):
 
     for el in result['items']:
         volume_info = el['volumeInfo']
-        if book.filter(title=volume_info['title'],
-                       published_date_year=volume_info['publishedDate']
-                       [0:4]).exists():
-            db = book.get(
-                title=volume_info['title'],
-                published_date_year=volume_info['publishedDate'][0:4])
-        else:
-            db = Book()
+        if not volume_info.get('title') is None:
+            if book.filter(title=volume_info['title']).exists():
+                db = book.get(
+                    title=volume_info['title'])
+            else:
+                db = Book()
         authors_list = []
         categories_list = []
         if not volume_info.get('title') is None:

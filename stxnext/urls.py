@@ -1,10 +1,12 @@
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib import admin
 from django.urls import path, include
 from books.models import *
 from books.views import DBView
 from django.contrib.auth.models import User
 from rest_framework import filters, routers, serializers, viewsets, generics
-from django_filters.rest_framework import DjangoFilterBackend
+# from django_filters.rest_framework import DjangoFilterBackend
 
 
 # Serializers define the API representation.
@@ -30,13 +32,10 @@ class BookSerializer(serializers.ModelSerializer):
 class BooksViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    # filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     filterset_fields = ['title', 'authors', 'published_date_year']
     ordering_fields = ['published_date_year']
 
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
 
 # class BooksSearch(APIView):
 #     @classmethod
@@ -52,7 +51,6 @@ from rest_framework.response import Response
 #         books = Book.objects.all()
 #         serializer = BookSerializer(books, many=True)
 #         return Response(serializer.data)
-
 router = routers.DefaultRouter()
 router.register(r'books', BooksViewSet, basename="books"),
 # router.register(r'db', BooksSearch, basename="search_books")
