@@ -37,7 +37,7 @@ class Book(models.Model):
     thumbnail = models.URLField(null=True, blank=True)
 
     class Meta:
-        ordering = ("id", )
+        ordering = ("title", )
         verbose_name_plural = "Książki"
 
     def __str__(self):

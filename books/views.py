@@ -4,10 +4,13 @@ from django.views import View
 import requests
 from .models import *
 from .function import get_data
+import json
+from django.http import HttpResponse
+
 # Create your views here.
 
 
-class DBView(View):
+class DBLoadView(View):
     def get(self, request):
         form = LinkForm()
         ctx = {
@@ -32,3 +35,10 @@ class DBView(View):
             result = None
         ctx = {'result': result}
         return render(request, 'books/db_data.html', ctx)
+
+
+class SearchBookView(View):
+    def post(self, request):
+        q = request.POST.get("q")
+        books = Book.objects.filter(titile__icontains=q)
+        return HttpResponse(json.dumps(books), content_type="application/json")
