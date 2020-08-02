@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="row col-12 mt-2 mx-auto">
+        <form method="POST" enctype="multipart/form-data" class="col-lg-6 mx-auto text-center uniForm">
+            <div class="col-lg-8 row mx-auto text-center m-0 p-1">
+                {% csrf_token %}
+                {{ form }}
+            </div>
+            <div class="col-lg-8 row mx-auto text-center m-0 p-1">
+                <input class="col-12" type="submit" value="Load data">
+            </div>
+        </form>
+    </div>
+</div>

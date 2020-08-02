@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from books.models import *
+from books.views import DBView
 from django.contrib.auth.models import User
 from rest_framework import filters, routers, serializers, viewsets, generics
 from django_filters.rest_framework import DjangoFilterBackend
@@ -59,6 +60,7 @@ router.register(r'books', BooksViewSet, basename="books"),
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    path('db/', DBView.as_view(), name="db_load"),
     path('api-auth/', include('rest_framework.urls',
                               namespace='rest_framework')),
 ]
