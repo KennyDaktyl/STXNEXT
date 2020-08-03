@@ -3,7 +3,7 @@ from .forms import LinkForm
 from django.views import View
 import requests
 from .models import *
-from .function import get_data
+from .functions import get_data
 import json
 from django.http import HttpResponse
 
@@ -27,7 +27,7 @@ class DBLoadView(View):
                 status = data.status_code
                 result = data.json()
             except:
-                result = "Not connection"
+                result = "No data in link"
                 status = None
             if status == 200:
                 get_data(link)

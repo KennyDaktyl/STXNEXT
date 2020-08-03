@@ -1,59 +1,13 @@
-from django.http import JsonResponse, HttpResponse
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import filters, routers, serializers, viewsets, generics
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.models import User
-from django_filters.rest_framework import DjangoFilterBackend
-from django.core import serializers as ser
-from books.function import get_data, save_data
-from books.models import *
+from rest_framework import routers
 from books.views import DBLoadView, SearchBookView
-import json
-# Serializers define the API representation.
-
-
-class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Author
-        fields = [
-            'author',
-        ]
-
-
-class BookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        depth = 1
-        fields = [
-            'id', 'title', 'authors', 'categories', 'published_date_year',
-            'average_rating', 'ratings_count', 'thumbnail'
-        ]
-
-
-# ViewSets define the view behavior.
-class BooksViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['title', 'authors', 'published_date_year']
-    ordering_fields = ['published_date_year']
-
-
-class BooksAddPost(APIView):
-    serializer_class = BookSerializer
-
-    def post(self, request):
-        json_data = request.data
-        save_data(json_data)
-        books = Book.objects.all()
-        books = ser.serialize('json', books)
-        return HttpResponse(books, content_type="application/json")
+from books.views_api import *
 
 
 router = routers.DefaultRouter()
 router.register(r'books', BooksViewSet, basename="books"),
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
