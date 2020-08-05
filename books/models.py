@@ -44,6 +44,8 @@ class Book(models.Model):
 class Attribute(models.Model):
     name = models.CharField(
         max_length=128, db_index=True, null=True, blank=True)
+    parent_info = models.ForeignKey(
+        "Attribute", on_delete=models.CASCADE, null=True, blank=True)
     type_field = models.ForeignKey(
         "AttributeType", on_delete=models.CASCADE, null=True, blank=True)
 
@@ -52,7 +54,7 @@ class Attribute(models.Model):
         verbose_name_plural = "Attributes"
 
     def __str__(self):
-        return str(self.name)
+        return str(self.name)+" : "+str(self.type_field)
 
 
 class AttributeType(models.Model):
@@ -71,12 +73,12 @@ class AttributeValue(models.Model):
         "Book", on_delete=models.CASCADE, db_index=True)
     attribute_id = models.ForeignKey("Attribute", on_delete=models.CASCADE)
     attribute_value_str = models.TextField(null=True, blank=True)
-    attribute_value_int = models.IntegerField(null=True, blank=True)
+    attribute_value_float = models.FloatField(null=True, blank=True)
     attribute_value_bool = models.BooleanField(null=True, blank=True)
 
     class Meta:
-        ordering = ("book_id",)
+        ordering = ("book_id", "attribute_id")
         verbose_name_plural = "Attributes value"
 
     def __str__(self):
-        return str(self.type_name)
+        return str(self.book_id)+"-"+str(self.attribute_id)

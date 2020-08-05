@@ -5,3 +5,4 @@ from django.contrib import admin
 admin.site.register(Book)
 admin.site.register(Attribute)
 admin.site.register(AttributeType)
+admin.site.register(AttributeValue)

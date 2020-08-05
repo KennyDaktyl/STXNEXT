@@ -33,12 +33,13 @@ class DBLoadView(View):
                 get_new_data(link)
         else:
             result = None
-        ctx = {'result': result}
-        return render(request, 'books/db_data.html', ctx)
+        # ctx = {'result': result}
+        return HttpResponse(json.dumps(result, indent=2), content_type="application/json")
+        # return render(request, 'books/db_data.html', ctx)
 
 
 class SearchBookView(View):
     def post(self, request):
         q = request.POST.get("q")
         books = Book.objects.filter(titile__icontains=q)
-        return HttpResponse(json.dumps(books), content_type="application/json")
+        return HttpResponse(json.dumps(books, indent=2), content_type="application/json")
