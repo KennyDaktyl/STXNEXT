@@ -24,7 +24,7 @@ http://51.75.127.94:8000/load_data/<br />
 (app create or update new books, attributes and values)<br />
 (i try create elastic structure in database, but it is not work correctly, becouse deadline and my actuall job kill my project)<br />
 <br />
-http//:51.75.127.94:8000/db/<br />
+http://51.75.127.94:8000/db/<br />
 <br />
 (this view get request argument body {"q":"war"} and filter my books collections and response result)<br />
 (it work correct, a tested this by POSTMAN)<br />
