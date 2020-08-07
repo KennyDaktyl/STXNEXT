@@ -18,7 +18,7 @@ pyhton manage.py runserver<br />
 Production info<br />
 work on VPS<br />
 <br />
-http//:51.75.127.94:8000/load_data/<br />
+http://51.75.127.94:8000/load_data/<br />
 <br />
 (in this view you can paste the link with dataset)<br />
 (app create or update new books, attributes and values)<br />
