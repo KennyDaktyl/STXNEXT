@@ -1,7 +1,7 @@
 # STXNEXT
 Install local info
 
-virtualenv -p python3.8 env;
+virtualenv -p python3.8 env<br />
 souerce enb/bin/activate
 pip freeze -r requrements.txt
 psql -h localhost -p postgres
