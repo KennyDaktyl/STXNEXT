@@ -2,7 +2,7 @@
 Install local info
 
 virtualenv -p python3.8 env<br />
-souerce enb/bin/activate<br />
+source enb/bin/activate<br />
 pip freeze -r requrements.txt<br />
 psql -h localhost -p postgres<br />
 
@@ -29,7 +29,7 @@ http//:51.75.127.94:8000/db/<br />
 (this view get request argument body {"q":"war"} and filter my books collections and response result)<br />
 (it work correct, a tested this by POSTMAN)<br />
 
-(i hope than my project is interesting and yuo get me feedback)
+(i hope than my project is interesting and yuo get me feedback for next knowledge. I want to get info about 100% working code for my new skill. Thanks for that :))
 (i didn't have many time in this week becouse a work for 8AM to 6PM)
 (maybe when i was more time :) ?)
 
