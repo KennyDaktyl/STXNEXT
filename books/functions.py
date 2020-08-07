@@ -4,18 +4,27 @@ from .models import *
 import json
 
 
-def save_in_db(load_data):
-    result = load_data
-    book = Book.objects.all()
+# def save_in_db(load_data):
+#     result = load_data
+#     book = Book.objects.all()
 
 
-def get_data(link):
-    data_set = requests.get(link)
-    data_set = data_set.json()
-    save_in_db(data_set)
+# def get_data(link):
+#     data_set = requests.get(link)
+#     data_set = data_set.json()
+#     save_in_db(data_set)
 
 
 def get_type_field(field_element):
+    """The Function create type_field instance
+
+    Parameters:
+    argument1 (field_element): Name of type_field in list
+
+    Returns:
+    field_element:Instance TypeField
+
+   """
     types = AttributeType.objects.all()
     check_field = type(field_element)
     if not types.filter(type_name=check_field).exists():
@@ -28,6 +37,15 @@ def get_type_field(field_element):
 
 
 def get_attribute(attribute_name, type_field, parent_info=None):
+    """The Function create Attribute instance
+    Parameters:
+    argument1 (attribute_name): Name of attribute
+    argument2 (type_field): Type of value
+    argument3 (parent_info): Information about - If Attribute in dictionary has parent
+
+    Returns:
+    attribute:Instance Attribute
+    """
     attributes = Attribute.objects.all()
     types = AttributeType.objects.all()
     check_field = type(type_field)
@@ -52,6 +70,15 @@ def get_attribute(attribute_name, type_field, parent_info=None):
 
 
 def get_new_book(bookId, etag, selfLink):
+    """The Function create or edit Book instance
+    Parameters:
+    argument1 (bookId): Name of attribute
+    argument2 (type_field): Type of value
+    argument3 (parent_info): Information about - If Attribute in dictionary has parent
+
+    Returns:
+    attribute:Instance Attribute
+    """
     books = Book.objects.all()
     if books.filter(bookId=bookId).exists():
         book = books.get(bookId=bookId)
@@ -65,6 +92,15 @@ def get_new_book(bookId, etag, selfLink):
 
 
 def get_attr_value(book, attribute, value):
+    """The Function create value of attribute in book
+    Parameters:
+    argument1 (book): Book instance
+    argument2 (attribute): Attribute instance
+    argument3 (valueo): Value of attribte
+
+    Returns:
+    attr_value:Value of Attribute in Book's 
+    """
     attr_val = AttributeValue.objects.filter(bookId=book)
     if attr_val.filter(bookId=book).exists() and attr_val.filter(attributeId=attribute).exists():
         attrs_exist = attr_val.filter(
@@ -91,20 +127,19 @@ def get_attr_value(book, attribute, value):
                     attr_val.attributeId = attribute
                     attr_val.attribute_value_float = value
                     attr_val.save()
-            if (type(value)) == list:
-                if not el.attribute_value_list == value:
-                    for el_list in value:
-                        try:
-                            # attr_val = attr_val.objects.get(
-                            #     attribute_value_list=el_list)
-                            print(str(el_list)+":"+str(value))
-                        except:
-                            print('chuj2')
-                            # attr_val = AttributeValue()
-                            # attr_val.bookId = book
-                            # attr_val.attributeId = attribute
-                            # attr_val.attribute_value_list = str(value)
-                            # attr_val.save()
+            # if (type(value)) == list:
+            #     if not el.attribute_value_list == value:
+            #         for el_list in value:
+            #             try:
+            #                 # attr_val = attr_val.objects.get(
+            #                 #     attribute_value_list=el_list)
+            #                 print(str(el_list)+":"+str(value))
+            #             except:
+                    # attr_val = AttributeValue()
+                    # attr_val.bookId = book
+                    # attr_val.attributeId = attribute
+                    # attr_val.attribute_value_list = str(value)
+                    # attr_val.save()
     else:
         if (type(value)) == str:
             attr_val = AttributeValue()
@@ -143,6 +178,10 @@ def get_attr_value(book, attribute, value):
 
 
 def get_new_data(link):
+    """The Function create data from dataset in database
+    Parameters:
+    argument1 (link): Link with dataset
+    """
     data_set = requests.get(link)
     data_set = data_set.json()
     books = Book.objects.all()
@@ -176,6 +215,12 @@ def get_new_data(link):
 
 
 def get_book(book):
+    """The Function get all attributes for book
+    Parameters:
+    argument1 (book): Book instance
+    Returns:
+    attrs_dict: List with filter of Attributes in Book 
+    """
     attrs = AttributeValue.objects.filter(bookId=book)
     attrs_dict = {}
     authors_list = []
@@ -201,53 +246,3 @@ def get_book(book):
             attrs_dict[attr.attributeId.name] = attr.attribute_value_str
 
     return attrs_dict
-    # attr = Attribute.objects.get(name=attr)
-    # attrs_value = AttributeValue.objects.filter(
-    #     attribute_value_str__icontains=value)
-    # books_list = []
-    # for el in attrs_value:
-    #     books_list.append(el.bookId)
-    # return books_list
-
-    # attrs_all = Attribute.objects.all()
-    # result = {}
-    # books_list = []
-    # attr_dict = {}
-    # value_dict = {}
-    # for book in books:
-    #     for attr in attrs_all:
-    #         for attr_v in attrs_value:
-    #             if attr_v.attributeId.id == attr.id:
-    #                 print(attr_v.attributeId.parent_info,
-    #                       attr.name, attr_v.attribute_value_str)
-    #     books_dict.append(attr_list)
-    #     attr_list.update(value_list)
-    #     for el in attrs:
-    #         if el.attributeId.id == attr.id:
-    #             if str(el.attributeId.type_field) == "<class 'str'>":
-    #                 if el.attributeId.parent_info == None:
-    #                     attr_list.update(
-    #                         {attr.name: el.attribute_value_str})
-    #                 else:
-    #                     # value_list.update(el.attributeId.parent_info:
-    #                     #                   {attr.name: el.attribute_value_str})
-
-    #                     print(el.attributeId.parent_info,
-    #                           attr.name, el.attribute_value_str)
-    #                     new_dict = {el.attributeId.parent_info: {
-    #                         attr.name: el.attribute_value_str}}
-    #                     # attr_list.update(
-    #                     #     {el.attributeId.parent_info: {attr.name: el.attribute_value_str}})
-    #             if str(el.attributeId.type_field) == "<class 'bool'>":
-    #                 attr_list.update(
-    #                     {attr.name: el.attribute_value_bool})
-    # if str(el.attributeId.type_field) == "<class 'int'>":
-    #     attr_list.append(
-    #         {attr.name: el.attribute_value_float})
-    # if str(el.attributeId.type_field) == "<class 'int'>":
-    #     attr_list.append(
-    #         {attr.name: el.attribute_value_float})
-    # if str(el.attributeId.type_field) == "<class 'dict'>":
-    #     attr_list.append(
-    #         {attr.name: el.attribute_value_dict})
-    # return books_list
