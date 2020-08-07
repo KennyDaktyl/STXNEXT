@@ -21,7 +21,16 @@ from books.models import *
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        depth = 1
+        depth = 2
         fields = [
-            'book_id',
+            'bookId', 'etag', 'selfLink', 'title', 'authors', 'publishedDate'
+        ]
+
+
+class BookAttrsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttributeValue
+        depth = 2
+        fields = [
+            'bookId', 'attributeId', 'attribute_value_str'
         ]

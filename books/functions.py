@@ -1,86 +1,12 @@
+from django.core import serializers
 import requests
 from .models import *
+import json
 
 
 def save_in_db(load_data):
     result = load_data
     book = Book.objects.all()
-
-    # for el in result['items']:
-    #     volume_info = el['volumeInfo']
-    #     authors_list = []
-    #     categories_list = []
-    #     if not volume_info.get('title') is None:
-    #         if book.filter(title=volume_info['title']).exists():
-    #             db = book.get(
-    #                 title=volume_info['title'])
-    #         else:
-    #             db = Book()
-    #         db.title = volume_info.get('title')
-    #         if not volume_info.get('authors') is None:
-    #             check_list = isinstance(volume_info['authors'], list)
-    #             if check_list:
-    #                 for el in volume_info.get('authors'):
-    #                     if authors.filter(author=el).exists():
-    #                         author = Author.objects.get(author=el)
-    #                     else:
-    #                         author = Author()
-    #                         author.author = el
-    #                         author.save()
-    #                     authors_list.append(author)
-    #             else:
-    #                 if authors.filter(author=volume_info['authors']).exists():
-    #                     author = Author.objects.get(
-    #                         author=volume_info['authors'])
-    #                 else:
-    #                     author = Author()
-    #                     author.author = volume_info['authors']
-    #                     author.save()
-    #                     authors_list.append(author)
-    #         else:
-    #             author = None
-    #         if not volume_info.get('publishedDate') is None:
-    #             if len(volume_info['publishedDate']) == 10:
-    #                 db.published_date_year = volume_info['publishedDate'][0:4]
-
-    #             if len(volume_info['publishedDate']) == 4:
-    #                 db.published_date_year = int(volume_info['publishedDate'])
-
-    #         if not volume_info.get('categories') is None:
-    #             check_list = isinstance(volume_info['categories'], list)
-    #             if check_list:
-    #                 for el in volume_info.get('categories'):
-    #                     if categories.filter(category=el).exists():
-    #                         category = Category.objects.get(category=el)
-    #                     else:
-    #                         category = Category()
-    #                         category.category = el
-    #                         category.save()
-    #                     categories_list.append(category)
-    #             else:
-    #                 if categories.filter(
-    #                         categories=volume_info['categories']).exists():
-    #                     category = Category.objects.get(
-    #                         categories=volume_info['categories'])
-    #                 else:
-    #                     category = Author()
-    #                     category.category = volume_info['categories']
-    #                     category.save()
-    #                     categories_list.append(category)
-    #         else:
-    #             category = None
-    #         if not volume_info.get('averageRating') is None:
-    #             db.average_rating = volume_info['averageRating']
-    #         if not volume_info.get('ratingsCount') is None:
-    #             db.ratings_count = volume_info['ratingsCount']
-    #         if not volume_info.get('imageLinks').get('thumbnail') is None:
-    #             db.thumbnail = volume_info['imageLinks']['thumbnail']
-    #         db.save()
-    #         if author:
-    #             db.authors.add(*authors_list)
-    #         if category:
-    #             db.categories.add(*categories_list)
-    #         db.save()
 
 
 def get_data(link):
@@ -105,7 +31,6 @@ def get_attribute(attribute_name, type_field, parent_info=None):
     attributes = Attribute.objects.all()
     types = AttributeType.objects.all()
     check_field = type(type_field)
-
     if not types.filter(type_name=check_field).exists():
         type_atr = AttributeType()
     else:
@@ -126,13 +51,13 @@ def get_attribute(attribute_name, type_field, parent_info=None):
     return attribute
 
 
-def get_new_book(book_id, etag, selfLink):
+def get_new_book(bookId, etag, selfLink):
     books = Book.objects.all()
-    if books.filter(book_Id=book_id).exists():
-        book = books.get(book_Id=book_id)
+    if books.filter(bookId=bookId).exists():
+        book = books.get(bookId=bookId)
     else:
         book = Book()
-        book.book_Id = book_id
+        book.bookId = bookId
         book.etag = etag
         book.selfLink = selfLink
         book.save()
@@ -140,52 +65,81 @@ def get_new_book(book_id, etag, selfLink):
 
 
 def get_attr_value(book, attribute, value):
-    attr_val = AttributeValue.objects.filter(book_id=book)
-    # if attr_val.filter(book_id=book).exists() and attr_val.filter(attribute_id=attribute).exists():
-    # attr_val.filter(book_id=book).filter(attribute_id=attribute)
-    # for el in attr_val:
-    #     if (type(value)) == str:
-    #         if el.attribute_value_str != str(value):
-    #             print(el.attribute_value_str, value)
-    #             attr_val = AttributeValue()
-    #             attr_val.book_id = book
-    #             attr_val.attribute_id = attribute
-    #             attr_val.attribute_value_str = value
-    #             attr_val.save()
-    #     if (type(value)) == bool:
-    #         if attr_val.attribute_value_bool != bool(value):
-    #             attr_val = AttributeValue()
-    #             attr_val.book_id = book
-    #             attr_val.attribute_id = attribute
-    #             attr_val.attribute_value_bool = value
-    #             attr_val.save()
-    #     if (type(value)) == int:
-    #         if attr_val.attribute_value_float != float(value):
-    #             attr_val = AttributeValue()
-    #             attr_val.attribute_value_float = value
-    #             attr_val.book_id = book
-    #             attr_val.attribute_id = attribute
-    #             attr_val.save()
-    # else:
-    # print(type(value), value)
-    if (type(value)) == str:
-        attr_val = AttributeValue()
-        attr_val.book_id = book
-        attr_val.attribute_id = attribute
-        attr_val.attribute_value_str = value
-        attr_val.save()
-    if (type(value)) == bool:
-        attr_val = AttributeValue()
-        attr_val.book_id = book
-        attr_val.attribute_id = attribute
-        attr_val.attribute_value_bool = value
-        attr_val.save()
-    if (type(value)) == int:
-        attr_val = AttributeValue()
-        attr_val.book_id = book
-        attr_val.attribute_id = attribute
-        attr_val.attribute_value_float = value
-        attr_val.save()
+    attr_val = AttributeValue.objects.filter(bookId=book)
+    if attr_val.filter(bookId=book).exists() and attr_val.filter(attributeId=attribute).exists():
+        attrs_exist = attr_val.filter(
+            bookId=book).filter(attributeId=attribute)
+        for el in attrs_exist:
+            if (type(value)) == str:
+                if not str(el.attribute_value_str) == str(value):
+                    attr_val = AttributeValue()
+                    attr_val.bookId = book
+                    attr_val.attributeId = attribute
+                    attr_val.attribute_value_str = value
+                    attr_val.save()
+            if (type(value)) == bool:
+                if not el.attribute_value_bool == value:
+                    attr_val = AttributeValue()
+                    attr_val.bookId = book
+                    attr_val.attributeId = attribute
+                    attr_val.attribute_value_bool = value
+                    attr_val.save()
+            if (type(value)) == int:
+                if not el.attribute_value_float == value:
+                    attr_val = AttributeValue()
+                    attr_val.bookId = book
+                    attr_val.attributeId = attribute
+                    attr_val.attribute_value_float = value
+                    attr_val.save()
+            if (type(value)) == list:
+                if not el.attribute_value_list == value:
+                    for el_list in value:
+                        try:
+                            # attr_val = attr_val.objects.get(
+                            #     attribute_value_list=el_list)
+                            print(str(el_list)+":"+str(value))
+                        except:
+                            print('chuj2')
+                            # attr_val = AttributeValue()
+                            # attr_val.bookId = book
+                            # attr_val.attributeId = attribute
+                            # attr_val.attribute_value_list = str(value)
+                            # attr_val.save()
+    else:
+        if (type(value)) == str:
+            attr_val = AttributeValue()
+            attr_val.bookId = book
+            attr_val.attributeId = attribute
+            attr_val.attribute_value_str = value
+            attr_val.save()
+        if (type(value)) == bool:
+            attr_val = AttributeValue()
+            attr_val.bookId = book
+            attr_val.attributeId = attribute
+            attr_val.attribute_value_bool = value
+            attr_val.save()
+        if (type(value)) == int:
+            attr_val = AttributeValue()
+            attr_val.bookId = book
+            attr_val.attributeId = attribute
+            attr_val.attribute_value_float = value
+            attr_val.save()
+        if (type(value)) == list:
+            for el_list in value:
+                attr_val = AttributeValue()
+                attr_val.bookId = book
+                attr_val.attributeId = attribute
+                attr_val.attribute_value_list = el_list
+                attr_val.save()
+        # if (type(value)) == dict:
+        #     for k, v in value:
+        #         attr_val = AttributeValue()
+        #         attr_val.bookId = book
+        #         attr_val.attributeId = attribute
+        #         attr_val.attribute_value_dict = el_list
+        #         attr_val.save()
+
+    return attr_val
 
 
 def get_new_data(link):
@@ -198,82 +152,102 @@ def get_new_data(link):
     for el in data_set['items']:
         book = get_new_book(el['id'], el['etag'], el['selfLink'])
         volume_info = el['volumeInfo']
+
         for el in el.items():
+            parent_info = (el[0])
             if type(el[1]) == str:
                 attr_inst = get_attribute(el[0], el[1])
                 get_attr_value(book, attr_inst, el[1])
             if type(el[1]) == dict:
                 attr_inst = get_attribute(el[0], el[1])
-                # print(el[0], el[1])
                 for k, v in el[1].items():
                     if type(v) == dict:
-                        pass
-                        # print(v, type(v))
-                    else:
-                        # print(attr_inst)
-                        attr_inst = get_attribute(k, v, attr_inst)
-                        get_attr_value(book, attr_inst, v)
-                # print(el_2, type(el_2))
-                # attr_inst = get_attribute(el_2[0], el_2[1], attr_inst)
-                #     attr_inst = get_attribute(el[0], el[1])
-                #     if (type(el)) == tuple:
-                #         for el_2 in el:
-                #             if (type(el_2)) == dict:
-                #                 print(el_2, el[str(el_2)])
-                # print(el_2, type(el_2))
-                #     for el_2 in el:
-                #         print(el_2, type(el_2))
-                #         if (type(el_2)) == tuple:
-                #             for el_3 in el_2:
-                #                 print(el_3, type(el_3))
-                # else:
-                # print(el_2, type(el_2))
-                # else:
-                # print(el, type(el))
+                        attr_inst = get_attribute(
+                            k, v, parent_info=Attribute.objects.get(name=parent_info))
+                        for el in v.items():
+                            attr_inst = get_attribute(
+                                el[0], el[1], parent_info=Attribute.objects.get(name=k))
+                            get_attr_value(book, attr_inst, el[1])
 
-                # for el in volume_info.items():
-                #     attr = get_attribute(el[0], el[1])
-                #     # get_attr_value(book, attr, el)
-                #     # attr_val = AttributeValue()
-                #     # attr_val.book_id = book
-                #     # attr_val.attribute_id = attr
-                #     if not (type(el[1])) == dict and not (type(el[1])) == list:
-                #         pass
-                #         # if (type(el[1])) == str:
-                #         #     attr_val.attribute_value_str = el[1]
-                #         # if (type(el[1])) == bool:
-                #         #     attr_val.attribute_value_bool = el[1]
-                #         # if (type(el[1])) == int:
-                #         #     attr_val.attribute_value_float = el[1]
-                #         # attr_val.save()
-                #     else:
-                #         for el_list in el[1]:
-                #             if not (type(el_list)) == dict and not (type(el_list)) == list:
-                #                 get_attr_value(book, attr, el_list)
-                # print(book, attr, el_list)
-                # attr_val = AttributeValue()
-                # attr_val.book_id = book
-                # attr_val.attribute_id = attr
-                # if (type(el_list)) == str:
-                #     attr_val.attribute_value_str = el_list
-                # if (type(el_list)) == bool:
-                #     attr_val.attribute_value_bool = el_list
-                # if (type(el_list)) == int:
-                #     attr_val.attribute_value_float = el_list
-                # attr_val.save()
-                # else:
-                #     for el_list_list in el_list.items():
-                #         attr_in_list = get_attribute(
-                #             el_list_list[0], el_list_list[1], attr)
-                #         get_attr_value(
-                #             book, el_list_list[0], el_list_list[1])
-                # attr_val = AttributeValue()
-                # attr_val.book_id = book
-                # attr_val.attribute_id = attr
-                # if (type(el_list_list)) == str:
-                #     attr_val.attribute_value_str = el_list_list
-                # if (type(el_list_list)) == bool:
-                #     attr_val.attribute_value_bool = el_list_list
-                # if (type(el_list_list)) == int:
-                #     attr_val.attribute_value_float = el_list_list
-                # attr_val.save()
+                    else:
+                        attr_inst = get_attribute(
+                            k, v, parent_info=Attribute.objects.get(name=parent_info))
+                        get_attr_value(book, attr_inst, v)
+
+
+def get_book(book):
+    attrs = AttributeValue.objects.filter(bookId=book)
+    attrs_dict = {}
+    authors_list = []
+    categories_list = []
+    for attr in attrs:
+        if str(attr.attributeId.name) == 'title':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_str
+        if str(attr.attributeId.name) == 'authors':
+            authors_list.append(attr.attribute_value_list)
+            attrs_dict[attr.attributeId.name] = authors_list
+        if str(attr.attributeId.name) == 'publishedDate':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_str
+        if str(attr.attributeId.name) == 'rating':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_str
+        if str(attr.attributeId.name) == 'categories':
+            categories_list.append(attr.attribute_value_list)
+            attrs_dict[attr.attributeId.name] = categories_list
+        if str(attr.attributeId.name) == 'averageRating':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_float
+        if str(attr.attributeId.name) == 'ratingsCount':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_float
+        if str(attr.attributeId.name) == 'thumbnail':
+            attrs_dict[attr.attributeId.name] = attr.attribute_value_str
+
+    return attrs_dict
+    # attr = Attribute.objects.get(name=attr)
+    # attrs_value = AttributeValue.objects.filter(
+    #     attribute_value_str__icontains=value)
+    # books_list = []
+    # for el in attrs_value:
+    #     books_list.append(el.bookId)
+    # return books_list
+
+    # attrs_all = Attribute.objects.all()
+    # result = {}
+    # books_list = []
+    # attr_dict = {}
+    # value_dict = {}
+    # for book in books:
+    #     for attr in attrs_all:
+    #         for attr_v in attrs_value:
+    #             if attr_v.attributeId.id == attr.id:
+    #                 print(attr_v.attributeId.parent_info,
+    #                       attr.name, attr_v.attribute_value_str)
+    #     books_dict.append(attr_list)
+    #     attr_list.update(value_list)
+    #     for el in attrs:
+    #         if el.attributeId.id == attr.id:
+    #             if str(el.attributeId.type_field) == "<class 'str'>":
+    #                 if el.attributeId.parent_info == None:
+    #                     attr_list.update(
+    #                         {attr.name: el.attribute_value_str})
+    #                 else:
+    #                     # value_list.update(el.attributeId.parent_info:
+    #                     #                   {attr.name: el.attribute_value_str})
+
+    #                     print(el.attributeId.parent_info,
+    #                           attr.name, el.attribute_value_str)
+    #                     new_dict = {el.attributeId.parent_info: {
+    #                         attr.name: el.attribute_value_str}}
+    #                     # attr_list.update(
+    #                     #     {el.attributeId.parent_info: {attr.name: el.attribute_value_str}})
+    #             if str(el.attributeId.type_field) == "<class 'bool'>":
+    #                 attr_list.update(
+    #                     {attr.name: el.attribute_value_bool})
+    # if str(el.attributeId.type_field) == "<class 'int'>":
+    #     attr_list.append(
+    #         {attr.name: el.attribute_value_float})
+    # if str(el.attributeId.type_field) == "<class 'int'>":
+    #     attr_list.append(
+    #         {attr.name: el.attribute_value_float})
+    # if str(el.attributeId.type_field) == "<class 'dict'>":
+    #     attr_list.append(
+    #         {attr.name: el.attribute_value_dict})
+    # return books_list

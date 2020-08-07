@@ -3,42 +3,35 @@ from django.db import models
 # Create your models here.
 
 
-# class Author(models.Model):
-#     author = models.CharField(verbose_name="Author", max_length=512)
+class Author(models.Model):
+    author = models.CharField(verbose_name="Author", max_length=512)
 
-#     class Meta:
-#         ordering = ("author", )
-#         verbose_name_plural = "Autorzy"
+    class Meta:
+        ordering = ("author", )
 
-#     def __str__(self):
-#         return self.author
-
-
-# class Category(models.Model):
-#     category = models.CharField(verbose_name="Category", max_length=512)
-
-#     class Meta:
-#         ordering = ("category", )
-#         verbose_name_plural = "Kategorie"
-
-#     def __str__(self):
-#         return self.category
+    def __str__(self):
+        return self.author
 
 
 class Book(models.Model):
-    book_Id = models.CharField(
-        verbose_name="Book_ID", max_length=126)
+    bookId = models.CharField(
+        verbose_name="book_ID", max_length=126)
     etag = models.CharField(
         verbose_name="etag", max_length=126)
     selfLink = models.TextField(
         verbose_name="selflink")
+    title = models.TextField(
+        verbose_name="Title", null=True, blank=True)
+    publishedDate = models.CharField(max_length=10,
+                                     verbose_name="publishedDate", null=True, blank=True)
+    authors = models.ManyToManyField("Author")
 
     class Meta:
-        ordering = ("book_Id", )
+        ordering = ("bookId", )
         verbose_name_plural = "Books"
 
     def __str__(self):
-        return str(self.book_Id)
+        return str(self.id)+":"+str(self.bookId)
 
 
 class Attribute(models.Model):
@@ -54,7 +47,7 @@ class Attribute(models.Model):
         verbose_name_plural = "Attributes"
 
     def __str__(self):
-        return str(self.name)+" : "+str(self.type_field)
+        return str(self.name)
 
 
 class AttributeType(models.Model):
@@ -69,16 +62,38 @@ class AttributeType(models.Model):
 
 
 class AttributeValue(models.Model):
-    book_id = models.ForeignKey(
+    bookId = models.ForeignKey(
         "Book", on_delete=models.CASCADE, db_index=True)
-    attribute_id = models.ForeignKey("Attribute", on_delete=models.CASCADE)
+    attributeId = models.ForeignKey(
+        "Attribute", on_delete=models.CASCADE, null=True, blank=True)
     attribute_value_str = models.TextField(null=True, blank=True)
     attribute_value_float = models.FloatField(null=True, blank=True)
     attribute_value_bool = models.BooleanField(null=True, blank=True)
+    attribute_value_list = models.TextField(null=True, blank=True)
+    attribute_value_dict = models.TextField(null=True, blank=True)
 
     class Meta:
-        ordering = ("book_id", "attribute_id")
+        ordering = ("bookId", "attributeId")
         verbose_name_plural = "Attributes value"
 
+    def save(self, *args, **kwargs):
+        book = Book.objects.get(pk=self.bookId.id)
+        if str(self.attributeId.name) == 'title':
+            book.title = self.attribute_value_str
+            book.save()
+        if str(self.attributeId.name) == 'publishedDate':
+            book.publishedDate = self.attribute_value_str
+            book.save()
+        if str(self.attributeId.name) == 'authors' and type(self.attribute_value_list) != list:
+            try:
+                author = Author.objects.get(author=self.attribute_value_list)
+            except:
+                author = Author()
+            author.author = self.attribute_value_list
+            author.save()
+            book.authors.add(author)
+            book.save()
+        super(AttributeValue, self).save()
+
     def __str__(self):
-        return str(self.book_id)+"-"+str(self.attribute_id)
+        return str(self.bookId)+"-"+str(self.attributeId)

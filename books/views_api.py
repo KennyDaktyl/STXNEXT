@@ -12,16 +12,16 @@ class BooksViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['title', 'authors', 'published_date_year']
-    ordering_fields = ['published_date_year']
+    filterset_fields = ['title', 'authors', ]
+    ordering_fields = ['publishedDate']
 
 
 class BooksAddPost(APIView):
     serializer_class = BookSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         json_data = request.data
-        save_in_db(json_data)
-        books = Book.objects.all()
-        books = ser.serialize('json', books)
+        q = json_data['q']
+        books = Book.objects.filter(title__icontains=json_data['q'])
+        books = serializers.serialize('json', list(books))
         return HttpResponse(books, content_type="application/json")
