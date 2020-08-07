@@ -27,6 +27,8 @@ http://51.75.127.94:8000/load_data/<br />
 http://51.75.127.94:8000/books/<br />
 <br />
 (i used framework django restframework and django filters)
+(for check book details use exist ID for example [113,114,....122])
+http://51.75.127.94:8000/books/113<br />
 <br />
 http://51.75.127.94:8000/db/<br />
 <br />
