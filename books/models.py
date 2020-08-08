@@ -84,7 +84,7 @@ class AttributeValue(models.Model):
         if str(self.attributeId.name) == 'publishedDate':
             book.publishedDate = self.attribute_value_str
             book.save()
-        if str(self.attributeId.name) == 'authors' and type(self.attribute_value_list) != list:
+        if str(self.attributeId.name) == 'authors' and type(self.attribute_value_list) != list and self.attribute_value_list != None:
             try:
                 author = Author.objects.get(author=self.attribute_value_list)
             except:
