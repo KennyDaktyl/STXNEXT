@@ -13,6 +13,16 @@ class Author(models.Model):
         return self.author
 
 
+class Category(models.Model):
+    category = models.CharField(verbose_name="Category", max_length=512)
+
+    class Meta:
+        ordering = ("category", )
+
+    def __str__(self):
+        return self.category
+
+
 class Book(models.Model):
     bookId = models.CharField(
         verbose_name="book_ID", max_length=126)
@@ -24,7 +34,10 @@ class Book(models.Model):
         verbose_name="Title", null=True, blank=True)
     publishedDate = models.CharField(max_length=10,
                                      verbose_name="publishedDate", null=True, blank=True)
-    authors = models.ManyToManyField("Author")
+    authors = models.ManyToManyField("Author", blank=True)
+    categories = models.ManyToManyField("Category", blank=True)
+    averageRating = models.FloatField(null=True, blank=True)
+    ratingsCount = models.FloatField(null=True, blank=True)
 
     class Meta:
         ordering = ("bookId", )
@@ -92,6 +105,22 @@ class AttributeValue(models.Model):
             author.author = self.attribute_value_list
             author.save()
             book.authors.add(author)
+            book.save()
+        if str(self.attributeId.name) == 'categories' and type(self.attribute_value_list) != list and self.attribute_value_list != None:
+            try:
+                category = Category.objects.get(
+                    category=self.attribute_value_list)
+            except:
+                category = Category()
+            category.category = self.attribute_value_list
+            category.save()
+            book.categories.add(category)
+            book.save()
+        if str(self.attributeId.name) == 'averageRating':
+            book.averageRating = self.attribute_value_float
+            book.save()
+        if str(self.attributeId.name) == 'ratingsCount':
+            book.ratingsCount = self.attribute_value_float
             book.save()
         super(AttributeValue, self).save()
 

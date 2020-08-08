@@ -167,14 +167,22 @@ def get_attr_value(book, attribute, value):
                 attr_val = AttributeValue()
                 attr_val.bookId = book
                 attr_val.attributeId = attribute
-                # attr_val.attribute_value_list = el_list
+                attr_val.attribute_value_list = el_list
                 attr_val.save()
         if (type(value)) == dict:
-            attr_val = AttributeValue()
-            attr_val.bookId = book
-            attr_val.attributeId = attribute
-            # attr_val.attribute_value_dict = el_list
-            attr_val.save()
+            for el_dict in value:
+                attr_val = AttributeValue()
+                attr_val.bookId = book
+                attr_val.attributeId = attribute
+                attr_val.attribute_value_dict = el_dict
+                attr_val.save()
+        if (type(value)) == tuple:
+            for el_tup in tuple:
+                attr_val = AttributeValue()
+                attr_val.bookId = book
+                attr_val.attributeId = attribute
+                attr_val.attribute_value_dict = el_tup
+                attr_val.save()
 
     return attr_val
 
@@ -196,9 +204,11 @@ def get_new_data(link):
         for el in el.items():
             parent_info = (el[0])
             if type(el[1]) == list:
-                print('lista')
+                pass
+                # print('lista')
             if type(el[1]) == tuple:
-                print('tupla')
+                pass
+                # print('tupla')
             if type(el[1]) == str:
                 attr_inst = get_attribute(el[0], el[1])
                 get_attr_value(book, attr_inst, el[1])
@@ -224,7 +234,8 @@ def get_new_data(link):
                             get_attr_value(book, attr_inst, el[1])
                             if type(el) == tuple:
                                 for i in el:
-                                    print(i, el, parent_info)
+                                    pass
+                                    # print(i, el, parent_info)
                                     # attr_inst = get_attribute(
                                     #     el[0], el[1], parent_info=Attribute.objects.get(name=k))
                                     # print(el)
