@@ -36,8 +36,8 @@ http://51.75.127.94:8000/db/<br />
 (it work correct, a tested this by POSTMAN)<br />
 <br />
 http://51.75.127.94:8000/admin<br />
-StxNextPoznan
-stxnext123
+StxNextPoznan<br />
+stxnext123<br />
 <br />
 (i hope than my project is interesting and you get me feedback for next knowledge. Can I ask you to solve the problem correctly in order to continue my learning. Thanks for that :))
 (i didn't have many time in this week becouse i send in my job from 8AM to 6PM)
