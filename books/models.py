@@ -32,7 +32,7 @@ class Book(models.Model):
         verbose_name="selflink")
     title = models.TextField(
         verbose_name="Title", null=True, blank=True)
-    publishedDate = models.CharField(max_length=10,
+    publishedDate = models.CharField(max_length=32,
                                      verbose_name="publishedDate", null=True, blank=True)
     authors = models.ManyToManyField("Author", blank=True)
     categories = models.ManyToManyField("Category", blank=True)
@@ -60,7 +60,10 @@ class Attribute(models.Model):
         verbose_name_plural = "Attributes"
 
     def __str__(self):
-        return str(self.name)
+        if self.parent_info:
+            return str(self.name)+" : "+str(self.parent_info)
+        else:
+            return str(self.name)
 
 
 class AttributeType(models.Model):
