@@ -34,7 +34,11 @@ http://51.75.127.94:8000/db/<br />
 <br />
 (this view get request argument body {"q":"war"} and filter my books collections and response result)<br />
 (it work correct, a tested this by POSTMAN)<br />
-
+<br />
+http://51.75.127.94:8000/admin
+StxNextPoznan
+stxnext123
+<br />
 (i hope than my project is interesting and you get me feedback for next knowledge. Can I ask you to solve the problem correctly in order to continue my learning. Thanks for that :))
 (i didn't have many time in this week becouse i send in my job from 8AM to 6PM)
 (maybe when i had more time i was the Best :) ?)
